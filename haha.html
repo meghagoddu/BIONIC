@@ -1,0 +1,48 @@
+<html lang="en">
+  <head>
+    <title>NLX Widget Sample HTML</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <script defer src="https://unpkg.com/@nlxai/chat-widget/lib/index.umd.js"></script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const widget = nlxai.chatWidget.create({
+          config: {
+            botUrl: "https://bots.dev.studio.nlx.ai/c/kQMVl5AV3hfwJWLcuTCF3/Ext2eq5ZAYOYpJO9mTOyo",
+            headers: {
+              "nlx-api-key": "AIzaSyCqkJscbsoqmPyFRLRpCIPi850Zi7WptYI"
+            },
+            languageCode: "en-US"
+          },
+          titleBar: {
+            "title": "Support",
+            "withCollapseButton": true,
+            "withCloseButton": true
+          },
+          // CUSTOM BEHAVIOR SNIPPET
+          onExpand: (conversationHandler) => {
+            const checkMessages = (messages) => {
+              if (messages.length === 0) {
+                conversationHandler.sendWelcomeIntent();
+              }
+              conversationHandler.unsubscribe(checkMessages);
+            };
+            conversationHandler.subscribe(checkMessages);
+          },
+          // CUSTOM BEHAVIOR SNIPPET END
+          theme: {
+            "primaryColor": "#2663da",
+            "darkMessageColor": "#2663da",
+            "lightMessageColor": "#EFEFEF",
+            "white": "#FFFFFF",
+            "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif",
+            "spacing": 12,
+            "borderRadius": 8,
+            "chatWindowMaxHeight": 640
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
