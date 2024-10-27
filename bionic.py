@@ -447,7 +447,7 @@ def main():
                 help="Please upload your medical records in PDF format"
             )
             
-            symptoms = st.text_area(
+            info = st.text_area(
                 "If you have any other information you would like to provide, please write it out below:",
                 placeholder="Type here..."
             )
