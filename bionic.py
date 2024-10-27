@@ -3,7 +3,7 @@ import streamlit.components.v1 as components
 import hashlib
 import time
 
-# Page config
+# Page config remains the same
 st.set_page_config(
     page_title="BIONIC Health Portal",
     page_icon="🏥",
@@ -11,44 +11,133 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Enhanced CSS with modern design system
+# Updated CSS with horizontally narrower forms
 st.markdown(
     """
     <style>
-        /* Global Styles */
+        .reportview-container {
+            background-color: #181818;
+        }
+        .sidebar .sidebar-content {
+            background-color: #181818;
+        }
+
+        body {
+            margin: 0; 
+            padding: 0; 
+        }
+
         [data-testid="stAppViewContainer"] {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        .stRadio > div {
+            display: flex;
+            flex-direction: row !important;
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .stRadio > div input {
+            display: none;
+        }
+        
+        .stRadio > div label {
+            background: transparent;
+            color: white !important;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 1rem;
+            margin: 0 !important;
+        }
+        
+        .stRadio > div label:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .stRadio > div [type="radio"]:checked + label {
+            background-color: rgba(255, 255, 255, 0.2);
+            font-weight: bold;
+        }
+        
+        .form-container {
+            max-width: 300px;
+            margin: 0 auto;
+            padding: 0;
+        }
+        
+        .stTextInput input, .stSelectbox select, div[data-baseweb="select"] > div {
+            width: 100% !important;
+            min-width: unset !important;
+            max-width: 100% !important;
+            background-color: #1c1c1c;
+            color: white;
+        }
+        
+        .stButton > button {
+            width: 100% !important;
+        }
+        
+        .stForm > div[data-testid="stForm"] {
+            padding: 0 !important;
+        }
+        
+        .stForm {
+            padding: 0 !important;
+        }
+        
+        .main-title {
+            font-size: 2.5rem;
+            color: #3498DB; /* Updated title color */
+            margin-bottom: 2rem;
+            text-align: center;
         }
         
         .stButton button {
-            background: linear-gradient(135deg, #4B79A1 0%, #283E51 100%);
+            background: linear-gradient(135deg, #2980b9 0%, #1a1a1a 100%);
             color: white;
             border-radius: 8px;
             padding: 0.5rem 2rem;
             border: none;
-            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11);
+            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.1);
             transition: all 0.3s ease;
         }
         
         .stButton button:hover {
             transform: translateY(-2px);
             box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1);
+            background: linear-gradient(135deg, #1a5276 0%, #1a1a1a 100%);
         }
         
-        /* Card Styles */
+        .stTextInput input, .stSelectbox select {
+            border-radius: 8px;
+            border: 1px solid #E0E3E7;
+            padding: 0.75rem;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+        
+        .stTextInput input:focus, .stSelectbox select:focus {
+            border-color: #3498DB;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
         .custom-card {
-            background: white;
+            background: #1c1c1c;
             padding: 1.5rem;
             border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
             margin-bottom: 1rem;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        /* Metrics Styling */
         [data-testid="stMetricValue"] {
             font-size: 2rem !important;
-            color: #2C3E50;
+            color: #2980b9;
         }
         
         [data-testid="stMetricDelta"] {
@@ -58,7 +147,7 @@ st.markdown(
         
         /* Sidebar Styling */
         [data-testid="stSidebar"] {
-            background-color: #2C3E50;
+            background-color: #1c1c1c;
             padding-top: 2rem;
         }
         
@@ -68,83 +157,15 @@ st.markdown(
             padding: 0.5rem 0;
         }
         
-        /* Header Styling */
         .main-title {
             font-size: 2.5rem;
-            background: linear-gradient(120deg, #2C3E50, #3498DB);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #3498DB; 
             margin-bottom: 2rem;
         }
-        
-        /* Video Container Styling */
-        .video-container {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .record-button {
-            background: linear-gradient(135deg, #4B79A1 0%, #283E51 100%);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin: 10px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        .record-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1);
-        }
-        
-        /* Input Fields Styling */
-        .stTextInput input, .stTextArea textarea {
-            border-radius: 8px;
-            border: 1px solid #E0E3E7;
-            padding: 0.75rem;
-            font-size: 1rem;
-        }
-        
-        .stTextInput input:focus, .stTextArea textarea:focus {
-            border-color: #4B79A1;
-            box-shadow: 0 0 0 2px rgba(75, 121, 161, 0.1);
-        }
-        
-        /* Progress Bar Styling */
-        [data-testid="stProgress"] {
-            height: 12px;
-            border-radius: 6px;
-            background-color: #E0E3E7;
-        }
-        
-        [data-testid="stProgress"] > div {
-            background: linear-gradient(90deg, #4B79A1 0%, #283E51 100%);
-            border-radius: 6px;
-        }
-        
-        /* Chat Message Styling */
-        .chat-message {
-            padding: 1rem;
-            margin: 0.5rem 0;
-            border-radius: 10px;
-            max-width: 80%;
-        }
-        
-        .user-message {
-            background-color: #E3F2FD;
-            margin-left: auto;
-            border-top-right-radius: 0;
-        }
-        
-        .bot-message {
-            background-color: #F5F5F5;
-            margin-right: auto;
-            border-top-left-radius: 0;
+
+        .center-button {
+            display: flex;
+            justify-content: center;
         }
     </style>
     """,
@@ -174,8 +195,7 @@ def display_chat_message(message, is_user=True):
     )
 
 def show_video_recording():
-    st.markdown('<div class="custom-card">', unsafe_allow_html=True)
-    st.markdown("<h2 style=color:gray>📹 Video Consultation Recording</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style=color:lightblue>📹 Video Recording</h2>", unsafe_allow_html=True)
 
     html_code = """
         <div class="video-container" style="position: relative;">
@@ -242,224 +262,201 @@ def show_video_recording():
             }
         </script>
     """
-    components.html(html_code, height=1100)
+    components.html(html_code, height=1100)  # Reduced height for the video section
     st.markdown('</div>', unsafe_allow_html=True)
 
 def show_chatbot():
-
-    st.markdown('<div class="custom-card">', unsafe_allow_html=True)
-    st.markdown("<h2 style=color:gray>💬 Healthcare Assistant</h2>", unsafe_allow_html=True)
-
-
     nlx_chatbot_html = """
-        <html lang="en">
-            <head>
-                <title>NLX Widget Sample HTML</title>
-                <meta name="viewport" content="width=device-width, initial-scale=1">
-            </head>
-            <body>
+    <html lang="en">
+        <head>
+            <title>NLX Widget Sample HTML</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+                body {
+                    margin: 0;
+                    padding: 0;
+                }
+                #chatbot-container {
+                    position: absolute; 
+                    top: 20px;
+                    left: 0;
+                    right: 0;
+                    z-index: 1000; 
+                    height: auto; 
+                }
+            </style>
+        </head>
+        <body>
+            <div id="chatbot-container">
                 <script defer src="https://unpkg.com/@nlxai/chat-widget/lib/index.umd.js"></script>
                 <script>
                 window.addEventListener("DOMContentLoaded", () => {
                     const widget = nlxai.chatWidget.create({
-                    config: {
-                        botUrl: "https://bots.dev.studio.nlx.ai/c/kQMVl5AV3hfwJWLcuTCF3/Ext2eq5ZAYOYpJO9mTOyo",
-                        headers: {
-                        "nlx-api-key": "AIzaSyCqkJscbsoqmPyFRLRpCIPi850Zi7WptYI"
+                        config: {
+                            botUrl: "https://bots.dev.studio.nlx.ai/c/kQMVl5AV3hfwJWLcuTCF3/Ext2eq5ZAYOYpJO9mTOyo",
+                            headers: {
+                                "nlx-api-key": "AIzaSyCqkJscbsoqmPyFRLRpCIPi850Zi7WptYI"
+                            },
+                            languageCode: "en-US"
                         },
-                        languageCode: "en-US"
-                    },
-                    titleBar: {
-                        "title": "Support",
-                        "withCollapseButton": true,
-                        "withCloseButton": true
-                    },
-                    onExpand: (conversationHandler) => {
-                        const checkMessages = (messages) => {
-                        if (messages.length === 0) {
-                            conversationHandler.sendWelcomeIntent();
+                        titleBar: {
+                            "title": "Chat with BIONIC!",
+                            "withCollapseButton": true,
+                            "withCloseButton": true
+                        },
+                        onExpand: (conversationHandler) => {
+                            const checkMessages = (messages) => {
+                                if (messages.length === 0) {
+                                    conversationHandler.sendWelcomeIntent();
+                                }
+                                conversationHandler.unsubscribe(checkMessages);
+                            };
+                            conversationHandler.subscribe(checkMessages);
+                        },
+                        theme: {
+                            "primaryColor": "lightblue",
+                            "darkMessageColor": "lightblue",
+                            "lightMessageColor": "#EFEFEF",
+                            "white": "#FFFFFF",
+                            "fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif",
+                            "spacing": 12,
+                            "borderRadius": 8,
+                            "chatWindowMaxHeight": 800
                         }
-                        conversationHandler.unsubscribe(checkMessages);
-                        };
-                        conversationHandler.subscribe(checkMessages);
-                    },
-                    theme: {
-                        "primaryColor": "#2663da",
-                        "darkMessageColor": "#2663da",
-                        "lightMessageColor": "#EFEFEF",
-                        "white": "#FFFFFF",
-                        "fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif",
-                        "spacing": 12,
-                        "borderRadius": 8,
-                        "chatWindowMaxHeight": 640
-                    }
                     });
                 });
                 </script>
-            </body>
-        </html>
-        """
-        
-        # Inject the HTML code into Streamlit
-    st.components.v1.html(nlx_chatbot_html, height=700, scrolling=True)
-
-    # st.markdown('<div class="custom-card">', unsafe_allow_html=True)
-    # st.markdown("<h2 style=color:gray>💬 Healthcare Assistant</h2>", unsafe_allow_html=True)
-    
-    # # Display styled chat messages
-    # for message in st.session_state.chat_history:
-    #     display_chat_message(
-    #         message['text'],
-    #         is_user=(message['sender'] == "You")
-    #     )
-
-    # # Input area with improved styling
-    # user_input = st.text_input(":gray[Type your message...]", key="chat_input")
-    
-    # if st.button("Send", key="send_button"):
-    #     if user_input:
-    #         # Add user message
-    #         st.session_state.chat_history.append({
-    #             "sender": "You",
-    #             "text": user_input
-    #         })
-            
-    #         # Simulate bot response
-    #         response = "This is a demo response. In a real application, this would be connected to your healthcare chatbot backend."
-    #         st.session_state.chat_history.append({
-    #             "sender": "Bot",
-    #             "text": response
-    #         })
-    #         st.rerun()
-
-    # st.markdown('</div>', unsafe_allow_html=True)
+            </div>
+        </body>
+    </html>
+    """
+    # Implement the HTML code into Streamlit
+    st.components.v1.html(nlx_chatbot_html, height=600, scrolling=True)
 
 def main():
-    st.markdown("<h1 class='main-title'>BIONIC Health Portal</h1>", unsafe_allow_html=True)
-    
-    # sidebar for navigation
-    with st.sidebar:
-        st.image("https://your-logo-url.com", width=150)
-        st.markdown("### BIONIC")
-        menu_choice = st.radio(
-            "",
-            ["Home", "Medical Records", "Video Consultation", "Chatbot"],
-            label_visibility="collapsed"
-        )
+    # Add menu choice
+    menu_choice = st.sidebar.radio(" ", ["Home", "Video Recording", "Chatbot", "Medical Records"])
 
-    if not st.session_state.logged_in:
-        st.write("<h3 style=color:gray> Welcome to BIONIC! Please sign up or login below. </h3>", unsafe_allow_html=True)
+    if 'page' not in st.session_state:
+        st.session_state.page = "Home"
 
-        # Initially show the signup form
-        st.markdown('<div class="custom-card">', unsafe_allow_html=True)
-        st.markdown("<h3 style=color:gray>✨ Sign Up</h3>", unsafe_allow_html=True)
-        with st.form("signup_form"):
-            new_username = st.text_input(":gray[New Username]")
-            new_password = st.text_input(":gray[New Password]", type="password")
-            new_age = st.text_input(":gray[Age]", placeholder="Enter your age")
-            
-            # Adding gender selection
-            new_gender = st.selectbox(
-                ":gray[Gender]",
-                options=["Select your gender", "Male", "Female", "Other"],
-                index=0
-            )
+    if not st.session_state.get('logged_in', False):
+        # Center the forms using columns
+        col1, col2, col3 = st.columns([1, 3, 1])  # Adjust the proportions as needed
+        
+        with col2:
+            st.markdown("<h1 class='main-title' style='color: lightblue; font-size: 90px;'>BIONIC Health Portal</h1>", unsafe_allow_html=True)
+            st.write("<h3 style='color: lightblue; text-align:center;'> Welcome to BIONIC! Please sign up or login below. </h3>", unsafe_allow_html=True)
 
-            submit_button = st.form_submit_button("Sign Up")
-            if submit_button:
-                # Check if any fields are empty or if gender is not selected
-                if not new_username or not new_password or not new_age or new_gender == "Select your gender":
-                    st.error("All fields are required. Please fill them out.")
-                elif new_username in st.session_state.users:
-                    st.error("Username already exists.")
-                else:
-                    # Storing user data including age and gender
-                    st.session_state.users[new_username] = {
-                        "password": hash_password(new_password),
-                        "age": new_age,
-                        "gender": new_gender
-                    }
-                    st.success(":gray[Sign up successful! You can now log in.]")
-                    st.session_state.logged_in = True
-                    st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
-
-
-        # Link to switch to the login form
-        if st.button("Already have an account? Log in here."):
-            st.session_state.show_login = True
-
-        # Check if the login form should be displayed
-        if st.session_state.get('show_login', False):
-            st.markdown('<div class="custom-card">', unsafe_allow_html=True)
-            st.markdown("<h3 style=color:gray>🔐 Login</h3>", unsafe_allow_html=True)
-            with st.form("login_form"):
-                username = st.text_input(":gray[Username]")
-                password = st.text_input(":gray[Password]", type="password")
-                submit_button = st.form_submit_button("Login")
+            # Sign Up Form
+            st.markdown("<h3 style='color:lightblue; text-align:center;'>✨ Sign Up</h3>", unsafe_allow_html=True)
+            with st.form("signup_form"):
+                new_username = st.text_input(":gray[New Username]")
+                new_password = st.text_input(":gray[New Password]", type="password")
+                new_age = st.text_input(":gray[Age]", placeholder="Enter your age")
+                new_gender = st.selectbox(
+                    ":gray[Gender]",
+                    options=["Select your gender", "Male", "Female", "Other"],
+                    index=0
+                )
+                submit_button = st.form_submit_button("Sign Up")
                 if submit_button:
-                    if username in st.session_state.users:
-                        if st.session_state.users[username]["password"] == hash_password(password):
+                    if not new_username or not new_password or not new_age or new_gender == "Select your gender":
+                        st.error(":gray[All fields are required.]")
+                    elif new_username in st.session_state.users:
+                        st.error("Username already exists.")
+                    else:
+                        st.session_state.users[new_username] = {
+                            "password": hash_password(new_password),
+                            "age": new_age,
+                            "gender": new_gender
+                        }
+                        st.success("Sign up successful!")
+                        st.session_state.logged_in = True
+                        st.rerun()
+
+            # Login link
+            if st.button("Already have an account? Log in here."):
+                st.session_state.show_login = True
+
+            # Login Form
+            if st.session_state.get('show_login', False):
+                st.markdown("<h3 style='color:lightblue; text-align:center;'>🔐 Login</h3>", unsafe_allow_html=True)
+                with st.form("login_form"):
+                    login_username = st.text_input(":gray[Username]")
+                    login_password = st.text_input(":gray[Password]", type="password")
+                    login_button = st.form_submit_button("Login")
+                    if login_button:
+                        if (login_username in st.session_state.users and
+                                st.session_state.users[login_username]["password"] == hash_password(login_password)):
+                            st.success("Login successful!")
                             st.session_state.logged_in = True
-                            st.success(":gray[Login successful!]")
+                            st.session_state.show_login = False
                             st.rerun()
                         else:
-                            st.error(":gray[Incorrect password.]")
-                    else:
-                        st.error("User not found.")
-            st.markdown('</div>', unsafe_allow_html=True)
-
-
+                            st.error("Invalid username or password.")
 
     else:
         if menu_choice == "Home":
-            st.markdown('<div class="custom-card">', unsafe_allow_html=True)
-            st.markdown("<h2 style=color:gray>👋 Welcome to Your Health Portal</h2>" , unsafe_allow_html=True)
-            
-            # Display metrics
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.metric(":gray[Last Visit]", "3 days ago", "-2")
-            with col2:
-                st.metric(":gray[Upcoming Appointments]", "2", "+1")
-            with col3:
-                st.metric(":gray[Documents Pending]", "1", "-3")
+            # Add some spacing before the title
+            for i in range(10):
+                st.write(" ")
 
-            # Progress bar for profile completion
-            st.write(":gray[Profile Completion]")
-            completion_percentage = 75
-            progress_bar = st.progress(0)
-            
-            for percent in range(completion_percentage + 1):
-                time.sleep(0.01)
-                progress_bar.progress(percent/100)
-            
-            st.markdown('</div>', unsafe_allow_html=True)
+            # Custom CSS for title size
+            st.markdown(
+                """
+                <style>
+                .custom-title {
+                    font-size: 72px;  /* Adjust size as needed */
+                    color: white;      /* Change color if needed */
+                    text-align: left;  /* Align text as desired */
+                }
+                </style>
+                """,
+                unsafe_allow_html=True
+            )
+            # Typing animation function
+            def typing_animation(text, delay=0.1):
+                # Create a placeholder for the animation
+                placeholder = st.empty()
+                current_text = ""
+                for char in text:
+                    current_text += char  # Append the current character
+                    placeholder.markdown(f"<h1 style='font-size: 100px; color: lightblue'>{current_text}</h1>", unsafe_allow_html=True)
+                    time.sleep(delay)
 
-        elif menu_choice == "Video Consultation":
+                # Display the full sentence at the end
+                placeholder.markdown(f"<h1 style='font-size: 100px; color: lightblue'>{text}</h1>", unsafe_allow_html=True)
+
+            typing_animation("BIONIC — AI-Enhanced Prosthetic Rehabilitation Tool", delay=0.1)
+
+        elif menu_choice == "Video Recording":
             show_video_recording()
-
+        
+        elif menu_choice == "Chatbot":
+            st.markdown("<h2 style=color:lightblue>Chat with our Chatbot right here! You may inform your symptoms, concerns, and etc.</h2>", unsafe_allow_html=True)
+            show_chatbot()
+        
         elif menu_choice == "Medical Records":
-            st.markdown('<div class="custom-card">', unsafe_allow_html=True)
-            st.markdown("<h2 style=color:gray>📋 Medical Records</h2>", unsafe_allow_html=True)
+            st.markdown("<div class='card'>", unsafe_allow_html=True)
+            st.markdown("<h2 style=color:lightblue>📋 Medical Records</h2>", unsafe_allow_html=True)
             
             uploaded_file = st.file_uploader(
-                ":gray[Upload Medical Records (PDF)]",
+                "Upload Medical Records (PDF)",
                 type=["pdf"],
-                help="Please upload your medical records in a PDF format"
+                help="Please upload your medical records in PDF format"
             )
             
             symptoms = st.text_area(
-                ":gray[List anything you would like the site to know...]",
-                placeholder="Please describe in detail..."
+                "Describe Your Symptoms",
+                placeholder="Please describe your symptoms in detail..."
             )
             
             if st.button("Submit Records"):
                 st.success("Records submitted successfully!")
-            st.markdown('</div>', unsafe_allow_html=True)
-            
-        elif menu_choice == "Chatbot":
-            show_chatbot()
+            st.markdown("</div>", unsafe_allow_html=True)
 
+
+# Run the main function
 if __name__ == "__main__":
     main()
