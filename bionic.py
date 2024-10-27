@@ -448,8 +448,8 @@ def main():
             )
             
             symptoms = st.text_area(
-                "Describe Your Symptoms",
-                placeholder="Please describe your symptoms in detail..."
+                "If you have any other information you would like to provide, please write it out below:",
+                placeholder="Type here..."
             )
             
             if st.button("Submit Records"):
